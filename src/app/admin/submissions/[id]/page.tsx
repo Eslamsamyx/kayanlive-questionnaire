@@ -2,24 +2,34 @@
 
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { api } from "~/trpc/react";
 
 interface SubmissionDetailPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default function SubmissionDetailPage({ params }: SubmissionDetailPageProps) {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const [submissionId, setSubmissionId] = useState<string | null>(null);
+
+  // Resolve params Promise
+  useEffect(() => {
+    params.then((resolvedParams) => {
+      setSubmissionId(resolvedParams.id);
+    });
+  }, [params]);
 
   // Get submission details
   const { data: submission, isLoading, error } = api.questionnaire.getSubmission.useQuery({
-    id: params.id
+    id: submissionId!
+  }, {
+    enabled: !!submissionId
   });
 
   useEffect(() => {
@@ -31,7 +41,7 @@ export default function SubmissionDetailPage({ params }: SubmissionDetailPagePro
     }
   }, [session, status, router]);
 
-  if (status === "loading" || !session) {
+  if (status === "loading" || !session || !submissionId) {
     return (
       <div className="min-h-screen bg-[#2c2c2b] flex items-center justify-center">
         <div className="text-white">Loading...</div>

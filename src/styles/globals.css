@@ -892,4 +892,13 @@ button:focus {
   }
 }
 
+/* Date Picker Portal Styling */
+.react-datepicker-popper {
+  z-index: 9999 !important;
+}
+
+.react-datepicker {
+  z-index: 9999 !important;
+}
+
 

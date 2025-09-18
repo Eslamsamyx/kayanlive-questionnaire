@@ -98,27 +98,6 @@ export function DateInput({ value, onChange, placeholder, label, required }: Dat
           wrapperClassName="w-full block"
           popperPlacement="bottom-start"
           portalId="date-picker-portal"
-          popperModifiers={[
-            {
-              name: "preventOverflow",
-              options: {
-                boundary: "viewport",
-                altBoundary: true,
-              },
-            },
-            {
-              name: "flip",
-              options: {
-                fallbackPlacements: ["bottom-end", "top-start", "top-end"],
-              },
-            },
-            {
-              name: "offset",
-              options: {
-                offset: [0, 8],
-              },
-            },
-          ]}
           showYearDropdown
           showMonthDropdown
           dropdownMode="select"

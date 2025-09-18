@@ -617,7 +617,7 @@ export function QuestionnaireFlow({ questionnaireId }: QuestionnaireFlowProps) {
 
   const sectionNames = Object.keys(sections);
   const currentSection = sectionNames[currentSectionIndex];
-  const currentSectionQuestions = sections[currentSection] || [];
+  const currentSectionQuestions = currentSection ? sections[currentSection] || [] : [];
 
   if (!questionnaireData) {
     return (

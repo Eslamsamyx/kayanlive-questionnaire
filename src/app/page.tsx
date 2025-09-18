@@ -344,71 +344,9 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer id="contact" className="px-6 py-12 bg-white/10 backdrop-blur-sm border-t border-white/20 rounded-t-[25px] lg:rounded-t-[61px] mx-4">
-        <div className="mx-auto max-w-[1600px]">
-          <div className="grid md:grid-cols-4 gap-8 mb-8">
-            <div className="md:col-span-2">
-              <motion.div 
-                className="flex items-center space-x-2 mb-4"
-                whileHover={{ scale: 1.05 }}
-              >
-                <div className="relative w-16 sm:w-20 md:w-24 lg:w-28 h-6 sm:h-7 md:h-8 lg:h-9 flex items-center justify-center">
-                  <Image
-                    src="/823c27de600ccd2f92af3e073c8e10df3a192e5c.png"
-                    alt="Kayan Live Logo"
-                    fill
-                    className="object-contain"
-                  />
-                </div>
-              </motion.div>
-              <p className="text-gray-300 mb-6 max-w-md">
-                Creating extraordinary booth experiences that elevate your brand and captivate your audience worldwide.
-              </p>
-              <div className="flex space-x-4">
-                {['facebook', 'twitter', 'linkedin', 'instagram'].map((social) => (
-                  <motion.a
-                    key={social}
-                    href="#"
-                    className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-gray-300 hover:text-white hover:bg-white/40 transition-all"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                  >
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
-                    </svg>
-                  </motion.a>
-                ))}
-              </div>
-            </div>
-            
-            <div>
-              <h3 className="text-white font-semibold mb-4">Services</h3>
-              <ul className="space-y-2 text-gray-300">
-                {['Standard Booths', 'Mega Booths', 'Custom Solutions', 'Event Installations'].map((service) => (
-                  <motion.li 
-                    key={service}
-                    className="hover:text-[#7afdd6] transition-colors cursor-pointer"
-                    whileHover={{ x: 5 }}
-                  >
-                    {service}
-                  </motion.li>
-                ))}
-              </ul>
-            </div>
-            
-            <div>
-              <h3 className="text-white font-semibold mb-4">Contact</h3>
-              <div className="space-y-2 text-gray-300">
-                <motion.p whileHover={{ x: 5 }} className="hover:text-[#7afdd6] transition-colors">hello@kayanlive.com</motion.p>
-                <motion.p whileHover={{ x: 5 }} className="hover:text-[#7afdd6] transition-colors">+1 (555) 123-4567</motion.p>
-                <motion.p whileHover={{ x: 5 }} className="hover:text-[#7afdd6] transition-colors">New York, NY</motion.p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="border-t border-white/20 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 Kayan Live. All rights reserved.</p>
-          </div>
+      <footer className="px-6 py-8 bg-white/10 backdrop-blur-sm border-t border-white/20 rounded-t-[25px] lg:rounded-t-[61px] mx-4">
+        <div className="mx-auto max-w-[1600px] text-center text-gray-400">
+          <p>&copy; 2024 Kayan Live. All rights reserved.</p>
         </div>
       </footer>
     </div>

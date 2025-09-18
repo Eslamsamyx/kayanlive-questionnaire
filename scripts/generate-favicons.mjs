@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // SVG template for KayanLive favicon
-const svgTemplate = (size) => `
+const svgTemplate = (size: number) => `
 <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
   <!-- Background -->
   <rect width="${size}" height="${size}" rx="${size * 0.15}" fill="#2c2c2b"/>
@@ -28,7 +28,7 @@ const svgTemplate = (size) => `
 </svg>`;
 
 // Alternative design with geometric K
-const geometricSvg = (size) => `
+const geometricSvg = (size: number) => `
 <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
   <rect width="${size}" height="${size}" rx="${size * 0.15}" fill="#2c2c2b"/>
   <defs>
@@ -89,7 +89,8 @@ async function generateFavicons() {
   const ico48 = await sharp(Buffer.from(geometricSvg(48))).resize(48, 48).png().toBuffer();
 
   try {
-    const icoBuffer = await toIco.default ? toIco.default([ico16, ico32, ico48]) : toIco([ico16, ico32, ico48]);
+    // @ts-ignore - sharp-ico import issues with module types
+    const icoBuffer = await (toIco.default || toIco)([ico16, ico32, ico48]);
     fs.writeFileSync(path.join(publicDir, 'favicon.ico'), icoBuffer);
     console.log('✓ Generated favicon.ico');
   } catch (e) {

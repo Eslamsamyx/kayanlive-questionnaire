@@ -157,7 +157,7 @@ export function ThankYouScreen({
           >
             <div className="relative w-24 sm:w-28 md:w-32 lg:w-36 h-10 sm:h-11 md:h-12 lg:h-14 flex items-center justify-center">
               <Image
-                src="/823c27de600ccd2f92af3e073c8e10df3a192e5c.png"
+                src="/kayan-logo-official.png"
                 alt="Kayan Live Logo"
                 fill
                 className="object-contain"

@@ -117,7 +117,8 @@ export interface Question {
   // Likert scale specific
   scaleLabels?: string[];
   
-  // Ranking specific
+  // Ranking and checkbox specific
+  minSelections?: number;
   maxSelections?: number;
   
   // Location specific

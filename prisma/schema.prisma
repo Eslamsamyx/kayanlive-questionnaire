@@ -61,6 +61,7 @@ model User {
     email         String?   @unique
     emailVerified DateTime?
     image         String?
+    passwordHash  String?   // For admin users with credentials login
     role          UserRole  @default(USER)
     accounts      Account[]
     sessions      Session[]

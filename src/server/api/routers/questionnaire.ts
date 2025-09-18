@@ -6,13 +6,14 @@ import {
 } from "~/server/api/trpc";
 import { TRPCError } from "@trpc/server";
 import { UserRole } from "@prisma/client";
+import { sanitizationUtils } from "~/server/utils/sanitization";
 
 // Schema for submission data
 const SubmissionAnswerSchema = z.object({
   questionId: z.number(),
   questionType: z.string(),
   section: z.string(),
-  textValue: z.string().optional(),
+  textValue: z.string().nullable().optional(),
   jsonValue: z.any().optional(),
 });
 
@@ -29,7 +30,7 @@ const QuestionnaireSubmissionSchema = z.object({
   questionnaireId: z.string(),
   companyName: z.string().optional(),
   contactPerson: z.string().optional(),
-  email: z.string().email().optional(),
+  email: z.string().email().optional().nullable(),
   industry: z.string().optional(),
   answers: z.array(SubmissionAnswerSchema),
   uploadedFiles: z.array(FileUploadSchema).optional().default([]),
@@ -37,44 +38,174 @@ const QuestionnaireSubmissionSchema = z.object({
 });
 
 export const questionnaireRouter = createTRPCRouter({
+  // Save draft - public procedure for auto-save
+  saveDraft: publicProcedure
+    .input(
+      z.object({
+        questionnaireId: z.string(),
+        answers: z.array(SubmissionAnswerSchema),
+        companyName: z.string().optional(),
+        contactPerson: z.string().optional(),
+        email: z.string().email().optional().nullable(),
+        industry: z.string().optional(),
+        draftId: z.string().optional(), // For updating existing draft
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        // Sanitize inputs
+        const sanitizedData = {
+          companyName: input.companyName
+            ? sanitizationUtils.sanitizeCompanyName(input.companyName)
+            : null,
+          contactPerson: input.contactPerson
+            ? sanitizationUtils.sanitizeText(input.contactPerson)
+            : null,
+          email: input.email
+            ? sanitizationUtils.sanitizeEmail(input.email)
+            : null,
+          industry: input.industry
+            ? sanitizationUtils.sanitizeText(input.industry)
+            : null,
+        };
+
+        if (input.draftId) {
+          // Update existing draft
+          const draft = await ctx.db.questionnaireSubmission.update({
+            where: { id: input.draftId },
+            data: {
+              ...sanitizedData,
+              updatedAt: new Date(),
+              answers: {
+                deleteMany: {},
+                create: input.answers.map((answer) => ({
+                  questionId: answer.questionId,
+                  questionType: sanitizationUtils.sanitizeText(answer.questionType) || answer.questionType,
+                  section: sanitizationUtils.sanitizeText(answer.section) || answer.section,
+                  textValue: answer.textValue
+                    ? sanitizationUtils.sanitizeText(answer.textValue)
+                    : null,
+                  jsonValue: answer.jsonValue
+                    ? sanitizationUtils.sanitizeJson(answer.jsonValue)
+                    : null,
+                })),
+              },
+            },
+          });
+
+          return {
+            success: true,
+            draftId: draft.id,
+            message: "Draft saved",
+          };
+        } else {
+          // Create new draft
+          const draft = await ctx.db.questionnaireSubmission.create({
+            data: {
+              questionnaireId: input.questionnaireId,
+              ...sanitizedData,
+              isComplete: false,
+              answers: {
+                create: input.answers.map((answer) => ({
+                  questionId: answer.questionId,
+                  questionType: sanitizationUtils.sanitizeText(answer.questionType) || answer.questionType,
+                  section: sanitizationUtils.sanitizeText(answer.section) || answer.section,
+                  textValue: answer.textValue
+                    ? sanitizationUtils.sanitizeText(answer.textValue)
+                    : null,
+                  jsonValue: answer.jsonValue
+                    ? sanitizationUtils.sanitizeJson(answer.jsonValue)
+                    : null,
+                })),
+              },
+            },
+          });
+
+          return {
+            success: true,
+            draftId: draft.id,
+            message: "Draft created",
+          };
+        }
+      } catch (error) {
+        console.error("Error saving draft:", error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to save draft",
+        });
+      }
+    }),
+
   // Submit questionnaire - public procedure
   submit: publicProcedure
     .input(QuestionnaireSubmissionSchema)
     .mutation(async ({ ctx, input }) => {
       try {
-        const submission = await ctx.db.questionnaireSubmission.create({
-          data: {
-            questionnaireId: input.questionnaireId,
-            companyName: input.companyName,
-            contactPerson: input.contactPerson,
-            email: input.email,
-            industry: input.industry,
-            isComplete: input.isComplete,
-            submittedAt: input.isComplete ? new Date() : null,
-            answers: {
-              create: input.answers.map((answer) => ({
-                questionId: answer.questionId,
-                questionType: answer.questionType,
-                section: answer.section,
-                textValue: answer.textValue,
-                jsonValue: answer.jsonValue,
-              })),
+        // Sanitize all text inputs before saving
+        const sanitizedCompanyName = input.companyName
+          ? sanitizationUtils.sanitizeCompanyName(input.companyName)
+          : null;
+        const sanitizedContactPerson = input.contactPerson
+          ? sanitizationUtils.sanitizeText(input.contactPerson)
+          : null;
+        const sanitizedEmail = input.email
+          ? sanitizationUtils.sanitizeEmail(input.email)
+          : null;
+        const sanitizedIndustry = input.industry
+          ? sanitizationUtils.sanitizeText(input.industry)
+          : null;
+
+        // Use database transaction for data integrity
+        const submission = await ctx.db.$transaction(async (tx) => {
+          const newSubmission = await tx.questionnaireSubmission.create({
+            data: {
+              questionnaireId: sanitizationUtils.sanitizeText(input.questionnaireId) || input.questionnaireId,
+              companyName: sanitizedCompanyName,
+              contactPerson: sanitizedContactPerson,
+              email: sanitizedEmail,
+              industry: sanitizedIndustry,
+              isComplete: input.isComplete,
+              submittedAt: input.isComplete ? new Date() : null,
+              answers: {
+                create: input.answers.map((answer) => ({
+                  questionId: answer.questionId,
+                  questionType: sanitizationUtils.sanitizeText(answer.questionType) || answer.questionType,
+                  section: sanitizationUtils.sanitizeText(answer.section) || answer.section,
+                  textValue: answer.textValue
+                    ? sanitizationUtils.sanitizeText(answer.textValue)
+                    : null,
+                  jsonValue: answer.jsonValue
+                    ? sanitizationUtils.sanitizeJson(answer.jsonValue)
+                    : null,
+                })),
+              },
+              uploadedFiles: {
+                create: input.uploadedFiles?.map((file) => {
+                  const sanitizedMetadata = sanitizationUtils.sanitizeFileMetadata({
+                    fileName: file.fileName,
+                    originalName: file.originalName,
+                    mimeType: file.mimeType,
+                    filePath: file.filePath,
+                  });
+
+                  return {
+                    questionId: file.questionId,
+                    fileName: sanitizedMetadata.fileName || file.fileName,
+                    originalName: sanitizedMetadata.originalName || file.originalName,
+                    fileSize: file.fileSize,
+                    mimeType: sanitizedMetadata.mimeType || file.mimeType,
+                    filePath: sanitizedMetadata.filePath || file.filePath,
+                  };
+                }) || [],
+              },
             },
-            uploadedFiles: {
-              create: input.uploadedFiles?.map((file) => ({
-                questionId: file.questionId,
-                fileName: file.fileName,
-                originalName: file.originalName,
-                fileSize: file.fileSize,
-                mimeType: file.mimeType,
-                filePath: file.filePath,
-              })) || [],
+            include: {
+              answers: true,
+              uploadedFiles: true,
             },
-          },
-          include: {
-            answers: true,
-            uploadedFiles: true,
-          },
+          });
+
+          return newSubmission;
         });
 
         return {
@@ -86,7 +217,7 @@ export const questionnaireRouter = createTRPCRouter({
         console.error("Error submitting questionnaire:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to submit questionnaire",
+          message: "Failed to submit questionnaire. Please try again.",
         });
       }
     }),

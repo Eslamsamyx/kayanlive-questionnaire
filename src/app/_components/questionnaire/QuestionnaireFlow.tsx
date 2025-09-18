@@ -779,7 +779,7 @@ export function QuestionnaireFlow({ questionnaireId }: QuestionnaireFlowProps) {
           <div className="flex items-center justify-center space-x-2 mb-4">
             <div className="relative w-20 sm:w-24 md:w-28 lg:w-32 h-8 sm:h-9 md:h-10 lg:h-11 flex items-center justify-center">
               <Image
-                src="/823c27de600ccd2f92af3e073c8e10df3a192e5c.png"
+                src="/kayan-logo-official.png"
                 alt="Kayan Live Logo"
                 fill
                 className="object-contain"

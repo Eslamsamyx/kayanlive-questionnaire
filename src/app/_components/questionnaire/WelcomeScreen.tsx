@@ -35,7 +35,7 @@ export function WelcomeScreen({ title, description, onStart, isBoothBrief }: Wel
           >
             <div className="relative w-24 sm:w-28 md:w-36 lg:w-40 xl:w-44 h-12 sm:h-14 md:h-16 lg:h-18 xl:h-20 flex items-center justify-center">
               <Image
-                src="/823c27de600ccd2f92af3e073c8e10df3a192e5c.png"
+                src="/kayan-logo-official.png"
                 alt="Kayan Live Logo"
                 fill
                 className="object-contain"

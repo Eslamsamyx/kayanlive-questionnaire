@@ -34,11 +34,11 @@ export const env = createEnv({
    * middlewares) or client-side so we need to destruct manually.
    */
   runtimeEnv: {
-    AUTH_SECRET: process.env.AUTH_SECRET || "local-dev-secret-key-for-questionnaire-platform",
-    NEXTAUTH_URL: process.env.NEXTAUTH_URL || "http://localhost:3000",
-    AUTH_DISCORD_ID: process.env.AUTH_DISCORD_ID || "",
-    AUTH_DISCORD_SECRET: process.env.AUTH_DISCORD_SECRET || "",
-    DATABASE_URL: process.env.DATABASE_URL || "file:./dev.db",
+    AUTH_SECRET: process.env.AUTH_SECRET,
+    NEXTAUTH_URL: process.env.NEXTAUTH_URL,
+    AUTH_DISCORD_ID: process.env.AUTH_DISCORD_ID,
+    AUTH_DISCORD_SECRET: process.env.AUTH_DISCORD_SECRET,
+    DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
   },
   /**

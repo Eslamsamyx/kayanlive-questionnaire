@@ -54,7 +54,7 @@ export default function SubmissionsPage() {
               <Link href="/admin" className="flex items-center space-x-4">
                 <div className="relative w-20 h-10">
                   <Image
-                    src="/823c27de600ccd2f92af3e073c8e10df3a192e5c.png"
+                    src="/kayan-logo-official.png"
                     alt="Kayan Live Logo"
                     fill
                     className="object-contain"

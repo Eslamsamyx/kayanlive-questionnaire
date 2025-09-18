@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation';
 import '../../styles/navbar-animations.css';
 import Button from './Button';
 
-const imgKayanLogoOpenFile31 = "/823c27de600ccd2f92af3e073c8e10df3a192e5c.png";
+const imgKayanLogoOpenFile31 = "/kayan-logo-official.png";
 
 interface NavItem {
   name: string;

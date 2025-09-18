@@ -5,6 +5,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { type UserRole } from "@prisma/client";
 
 import { db } from "~/server/db";
+import { AuthService } from "./auth.service";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -52,20 +53,15 @@ export const authConfig = {
           return null;
         }
 
-        // Simple admin authentication - in production, use proper password hashing
-        if (credentials.email === "admin@kayanlive.com" && credentials.password === "admin123") {
-          const user = await db.user.findUnique({
-            where: { email: credentials.email }
-          });
+        // Use secure authentication service with bcrypt
+        const user = await AuthService.authenticateUser(
+          credentials.email as string,
+          credentials.password as string
+        );
 
-          if (user && user.role === "ADMIN") {
-            return {
-              id: user.id,
-              email: user.email,
-              name: user.name,
-              role: user.role,
-            };
-          }
+        // Only allow admin users to login with credentials
+        if (user && user.role === "ADMIN") {
+          return user;
         }
 
         return null;

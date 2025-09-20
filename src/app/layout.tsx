@@ -39,13 +39,21 @@ export const metadata: Metadata = {
     description: "Submit your booth project requirements",
     images: ["/og-image.png"],
   },
-  icons: [
-    { rel: "icon", url: "/favicon.ico" },
-    { rel: "icon", type: "image/png", sizes: "16x16", url: "/favicon-16x16.png" },
-    { rel: "icon", type: "image/png", sizes: "32x32", url: "/favicon-32x32.png" },
-    { rel: "apple-touch-icon", sizes: "180x180", url: "/apple-touch-icon.png" },
-    { rel: "manifest", url: "/site.webmanifest" },
-  ],
+  icons: {
+    icon: [
+      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon.ico', sizes: 'any' }
+    ],
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }
+    ],
+    other: [
+      { rel: 'android-chrome-192x192', url: '/android-chrome-192x192.png' },
+      { rel: 'android-chrome-512x512', url: '/android-chrome-512x512.png' }
+    ]
+  },
+  manifest: '/site.webmanifest',
   viewport: {
     width: "device-width",
     initialScale: 1,
